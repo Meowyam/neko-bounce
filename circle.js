@@ -1,11 +1,3 @@
-function init() {
-    circle();
-    ball();
-    bubble();
-}
-
-window.onload=init;
-
 var requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
 
 
@@ -158,15 +150,16 @@ function bubble() {
         this.r = r;
         this.dx = Math.floor((Math.random()*10)+1);
         this.dy = Math.floor((Math.random()*10)+1);
-        this.dr = Math.floor((Math.random()*5));
+        this.dr = Math.floor((Math.random()*20)+1);
     }
 
 
     Bubbleconstructor.prototype.update = function() {
-        ctx.beginPath();
+       ctx.beginPath();
         ctx.arc(this.x, this.y, this.r, 0, Math.PI*2, true);
-        ctx.fillStyle='rgba(101,109,212,0.4)';
+        ctx.fillStyle="rgba(101,109,212,0.4)";
         ctx.fill();
+        ctx.closePath();
         if (this.x + this.dx > 500 || this.x + this.dx < 0) {
             this.dx = -this.dx;
             this.r += this.dr;}
@@ -182,7 +175,13 @@ function bubble() {
         var y = 0;
         var r = 5;
         var bubble = new Bubbleconstructor(x,y,r);
-        bubblearray.push(bubble);
+         if (bubblearray.length >= 100) {
+            bubblearray.splice(0,1);
+            bubblearray.push(bubble);
+        }
+        else {
+           bubblearray.push(bubble);
+        }
         requestAnimationFrame(draw);
         requestAnimationFrame(createBubble);
     }
