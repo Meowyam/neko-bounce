@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <title>Canvas Page</title>
+        <script type="text/javascript" src="circle.js"></script>
+    </head>
+
+    <body>
+        <canvas id="circleCanvas" width="500" height="500" style="border:1px solid rgb(0,0,0);">
+        </canvas>
+        <button onClick="circle()">start circles</button>
+	<button onClick="stop(moveCircle)">stop circles</button>
+        <br />
+        <canvas id="ballCanvas" width="500" height="500" style="border:1px solid rgb(0,0,0);">
+        </canvas>
+        <button onClick="ball()">start hearts</button>
+	<button onClick="stop(moveHeart)">stop hearts</button>
+        <br />
+        <canvas id="bubbleCanvas" width="500" height="500" style="border:1px solid rgb(0,0,0); background-color:rgb(227,230,236);">
+        </canvas>
+        <button onClick="bubble()">start bubbles</button>
+	<button onClick="stop(moveBubbles)">stop bubbles</button>
+  </body>
+
+</html>

@@ -1,10 +1,15 @@
 var requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
 
+var stopAnimationFrame = window.cancelAnimationFrame || window.mozCancelAnimationFrame || window.webkitCancelAnimationFrame || window.msCancelAnimationFrame;
 
 function randomcolour() {
     var rgb = [Math.floor(Math.random()*256),Math.floor(Math.random()*256),Math.floor(Math.random()*256)]
         var colour = "rgba(" + rgb.join(",") + ",0.4)";
     return colour;
+}
+
+function stop(request) {
+    stopAnimationFrame(request);
 }
 
 function circle() {
@@ -40,8 +45,8 @@ function circle() {
         var colour = randomcolour();
         var circle = new Circleconstructor(x,y,r,colour);
         circlearray.push(circle);
-        requestAnimationFrame(draw);
-        requestAnimationFrame(createCircles);
+        draw();
+        moveCircle = requestAnimationFrame(createCircles);
     }
 
     function deleteCircles() {
@@ -105,8 +110,8 @@ function ball() {
         var colour = randomcolour();
         var ball = new Ballconstructor(x,y,r,colour);
         ballarray.push(ball);
-        requestAnimationFrame(draw);
-        requestAnimationFrame(createBalls);
+        draw();
+        moveHeart = requestAnimationFrame(createBalls);
     }
 
     createBalls();
@@ -182,8 +187,8 @@ function bubble() {
         else {
            bubblearray.push(bubble);
         }
-        requestAnimationFrame(draw);
-        requestAnimationFrame(createBubble);
+        draw();
+        moveBubbles = requestAnimationFrame(createBubble);
     }
 
     createBubble();
