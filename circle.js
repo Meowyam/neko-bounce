@@ -2,27 +2,76 @@ var requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAni
 
 var stopAnimationFrame = window.cancelAnimationFrame || window.mozCancelAnimationFrame || window.webkitCancelAnimationFrame || window.msCancelAnimationFrame;
 
+var circletoggle = false;
+var hearttoggle = false;
+var bubbletoggle = false;
+
 function randomcolour() {
     var rgb = [Math.floor(Math.random()*256),Math.floor(Math.random()*256),Math.floor(Math.random()*256)]
         var colour = "rgba(" + rgb.join(",") + ",0.4)";
     return colour;
 }
 
-function stop(request) {
-    stopAnimationFrame(request);
+function stop() {
+    if (circletoggle == true) {
+        stopAnimationFrame(moveCircle);
+        circletoggle = false;
+    }
+    if (hearttoggle == true) {
+	stopAnimationFrame(moveHeart);
+	hearttoggle = false;
+    }
+    if (bubbletoggle == true) {
+	stopAnimationFrame(moveBubbles);
+	bubbletoggle = false;
+    }
 }
 
-function circle() {
 
-    var canvas=document.getElementById("circleCanvas");
+function startstopcircle() {
+
+
+   if (circletoggle == false) {
+	startcircle();
+   }
+   else {
+	stop();
+   }
+}
+
+function startstopheart() {
+
+   if (hearttoggle == false) {
+	startheart();
+   }
+   else {
+	stop();
+   }
+}
+
+function startstopbubble() {
+
+   if (bubbletoggle == false) {
+	startbubble();
+   }
+   else {
+	stop();
+   }
+}
+
+function startcircle() {
+
+    circletoggle = !circletoggle;
+
+    var canvas=document.getElementById("circlecanvas");
     var ctx=canvas.getContext("2d");
 
     var canvasWidth = canvas.width;
     var canvasHeight = canvas.height;
 
-    var circlearray = new Array();
+    var circles = new Array();
 
-    function Circleconstructor(x,y,r,colour) {
+    function Circle(x,y,r,colour) {
         this.x = x;
         this.y = y;
         this.r = r;
@@ -30,7 +79,7 @@ function circle() {
         this.increment = Math.floor((Math.random()*5)+1);
     }
 
-    Circleconstructor.prototype.update = function() {
+    Circle.prototype.update = function() {
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.r, 0, Math.PI*2, true);
         ctx.fillStyle=this.colour;
@@ -43,17 +92,17 @@ function circle() {
         var y = canvasHeight/2;
         var r = 5;
         var colour = randomcolour();
-        var circle = new Circleconstructor(x,y,r,colour);
-        circlearray.push(circle);
+        var circle = new Circle(x,y,r,colour);
+        circles.push(circle);
         draw();
         moveCircle = requestAnimationFrame(createCircles);
     }
 
     function deleteCircles() {
        var h = (Math.sqrt(canvasWidth*canvasWidth + canvasHeight*canvasHeight))/2;
-       for (var i=0; i < circlearray.length;) {
-           if (circlearray[i].r >= h) {
-               circlearray.splice(i,1);
+       for (var i=0; i < circles.length;) {
+           if (circles[i].r >= h) {
+               circles.splice(i,1);
            }
            else ++i;
        }
@@ -63,8 +112,8 @@ function circle() {
 
     function draw() {
         ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-        for (var i=0; i < circlearray.length; i++) {
-            var circle = circlearray[i];
+        for (var i=0; i < circles.length; i++) {
+            var circle = circles[i];
             circle.update();
         }
         deleteCircles();
@@ -72,14 +121,16 @@ function circle() {
 
 }
 
-function ball() {
+function startheart() {
 
-    var canvas=document.getElementById("ballCanvas");
+    hearttoggle = !hearttoggle
+
+    var canvas=document.getElementById("circlecanvas");
     var ctx=canvas.getContext("2d");
 
-    var ballarray = new Array();
+    var hearts = new Array();
    
-    function Ballconstructor(x,y,r,colour) {
+    function Heart(x,y,r,colour) {
         this.x = x;
         this.y = y;
         this.r = r;
@@ -90,12 +141,12 @@ function ball() {
     }
 
 
-    Ballconstructor.prototype.update = function() {
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.r, 0, Math.PI, true);
-        ctx.lineTo(this.x+this.r, this.y+(2*this.r));
-        ctx.lineTo(this.x+(2.5*this.r), this.y);
-        ctx.arc((this.x+1.5*this.r), this.y, this.r, 0, Math.PI, true);
+    Heart.prototype.update = function() {
+	ctx.beginPath();
+	ctx.arc(this.x, this.y, this.r, 0.75*Math.PI, -0.25*Math.PI, false);
+	ctx.arc(this.x+(2*(this.r*Math.cos(0.25*Math.PI))), this.y, this.r, 1.25*Math.PI, 0.25*Math.PI, false);
+	ctx.lineTo(this.x+(this.r*(Math.sqrt(2)-1/Math.sqrt(2))), this.y+3*(this.r*(Math.sqrt(2)-1/Math.sqrt(2))));
+	ctx.closePath();
         ctx.fillStyle=this.colour;
         ctx.fill();
         this.x += this.dx;
@@ -103,29 +154,29 @@ function ball() {
         this.r += this.dr;
     }
 
-    function createBalls() {
+    function createHearts() {
         var x = 0;
         var y = 0;
         var r = 5;
         var colour = randomcolour();
-        var ball = new Ballconstructor(x,y,r,colour);
-        ballarray.push(ball);
+        var heart = new Heart(x,y,r,colour);
+        hearts.push(heart);
         draw();
-        moveHeart = requestAnimationFrame(createBalls);
+        moveHeart = requestAnimationFrame(createHearts);
     }
 
-    createBalls();
+    createHearts();
 
-    function deleteBalls() {
-       for (var i=0; i < ballarray.length;) {
-           if (ballarray[i].x >= 500) {
-               ballarray.splice(i,1);
+    function deleteHearts() {
+       for (var i=0; i < hearts.length;) {
+           if (hearts[i].x >= 500) {
+               hearts.splice(i,1);
            }
-           else if (ballarray[i].y >= 500) {
-               ballarray.splice(i,1);
+           else if (hearts[i].y >= 500) {
+               hearts.splice(i,1);
            }
-           else if (ballarray[i].r >= Math.sqrt(250*250)) {
-               ballarray.splice(i,1);
+           else if (hearts[i].r >= Math.sqrt(250*250)) {
+               hearts.splice(i,1);
            }
            else ++i;
        }
@@ -133,23 +184,25 @@ function ball() {
 
     function draw() {
         ctx.clearRect(0, 0, 500, 500);
-        for (var i=0; i < ballarray.length; i++) {
-            var ball = ballarray[i];
-            ball.update();
+        for (var i=0; i < hearts.length; i++) {
+            var heart = hearts[i];
+            heart.update();
         }
-        deleteBalls();
+        deleteHearts();
     }
 
 }
 
-function bubble() {
+function startbubble() {
 
-    var canvas=document.getElementById("bubbleCanvas");
+   bubbletoggle = !bubbletoggle
+
+    var canvas=document.getElementById("circlecanvas");
     var ctx=canvas.getContext("2d");
 
-    var bubblearray = new Array();
+    var bubbles = new Array();
    
-    function Bubbleconstructor(x,y,r) {
+    function Bubble(x,y,r) {
         this.x = x;
         this.y = y;
         this.r = r;
@@ -159,7 +212,7 @@ function bubble() {
     }
 
 
-    Bubbleconstructor.prototype.update = function() {
+    Bubble.prototype.update = function() {
        ctx.beginPath();
         ctx.arc(this.x, this.y, this.r, 0, Math.PI*2, true);
         ctx.fillStyle="rgba(101,109,212,0.4)";
@@ -179,13 +232,13 @@ function bubble() {
         var x = 0;
         var y = 0;
         var r = 5;
-        var bubble = new Bubbleconstructor(x,y,r);
-         if (bubblearray.length >= 100) {
-            bubblearray.splice(0,1);
-            bubblearray.push(bubble);
+        var bubble = new Bubble(x,y,r);
+         if (bubbles.length >= 100) {
+            bubbles.splice(0,1);
+            bubbles.push(bubble);
         }
         else {
-           bubblearray.push(bubble);
+           bubbles.push(bubble);
         }
         draw();
         moveBubbles = requestAnimationFrame(createBubble);
@@ -194,9 +247,9 @@ function bubble() {
     createBubble();
 
     function deleteBubble() {
-       for (var i=0; i < bubblearray.length;) {
-         if (bubblearray[i].r >= 50) {
-               bubblearray.splice(i,1);
+       for (var i=0; i < bubbles.length;) {
+         if (bubbles[i].r >= 50) {
+               bubbles.splice(i,1);
            }
            else ++i;
        }
@@ -204,8 +257,8 @@ function bubble() {
 
     function draw() {
         ctx.clearRect(0, 0, 500, 500);
-        for (var i=0; i < bubblearray.length; i++) {
-            var bubble = bubblearray[i];
+        for (var i=0; i < bubbles.length; i++) {
+            var bubble = bubbles[i];
             bubble.update();
         }
         deleteBubble();
